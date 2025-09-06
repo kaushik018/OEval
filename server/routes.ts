@@ -7,6 +7,18 @@ import { benchmarkService } from "./services/benchmarkService";
 import { aiService } from "./services/aiService";
 import { reliabilityService } from "./services/reliabilityService";
 
+// Helper function to get user ID from authenticated request
+async function getUserIdFromRequest(req: any): Promise<string | null> {
+  try {
+    const userEmail = req.user.claims.email;
+    const user = await storage.getUserByEmail(userEmail);
+    return user?.id || null;
+  } catch (error) {
+    console.error("Error getting user ID:", error);
+    return null;
+  }
+}
+
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
   await setupAuth(app);
@@ -14,8 +26,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Auth routes
   app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
+      const userEmail = req.user.claims.email;
+      const user = await storage.getUserByEmail(userEmail);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
       res.json(user);
     } catch (error) {
       console.error("Error fetching user:", error);
@@ -26,7 +41,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Dashboard routes
   app.get('/api/dashboard/stats', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = await getUserIdFromRequest(req);
+      if (!userId) {
+        return res.status(404).json({ message: "User not found" });
+      }
       const stats = await storage.getDashboardStats(userId);
       res.json(stats);
     } catch (error) {
@@ -38,7 +56,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Application routes
   app.get('/api/applications', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = await getUserIdFromRequest(req);
+      if (!userId) {
+        return res.status(404).json({ message: "User not found" });
+      }
       const applications = await storage.getApplicationsByUserId(userId);
       
       // Fetch latest metrics for each application
@@ -68,7 +89,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post('/api/applications', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = await getUserIdFromRequest(req);
+      if (!userId) {
+        return res.status(404).json({ message: "User not found" });
+      }
       const data = insertApplicationSchema.parse({ ...req.body, userId });
       
       const application = await storage.createApplication(data);
@@ -98,7 +122,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Verify ownership
-      if (application.userId !== req.user.claims.sub) {
+      const userId = await getUserIdFromRequest(req);
+      if (!userId || application.userId !== userId) {
         return res.status(403).json({ message: "Access denied" });
       }
       
@@ -128,7 +153,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Verify ownership
-      if (application.userId !== req.user.claims.sub) {
+      const userId = await getUserIdFromRequest(req);
+      if (!userId || application.userId !== userId) {
         return res.status(403).json({ message: "Access denied" });
       }
       

@@ -84,20 +84,24 @@ class BenchmarkService {
     let failCount = 0;
     
     const endTime = Date.now() + (duration * 1000);
+    const minimumRequests = 5; // Ensure we make at least 5 requests
+    let requestCount = 0;
     
-    while (Date.now() < endTime) {
+    while (Date.now() < endTime || requestCount < minimumRequests) {
       try {
         const startTime = Date.now();
         
         const response = await fetch(url, {
           method: 'GET',
           headers: {
-            'User-Agent': 'ObjectiveEval-Benchmark/1.0'
+            'User-Agent': 'ObjectiveEval-Benchmark/1.0',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
           },
-          signal: AbortSignal.timeout(10000) // 10 second timeout
+          signal: AbortSignal.timeout(10000)
         });
         
         const responseTime = Date.now() - startTime;
+        requestCount++;
         
         if (response.ok) {
           responses.push(responseTime);
@@ -106,25 +110,29 @@ class BenchmarkService {
           failCount++;
         }
         
-        // Wait 100ms between requests for response time test
-        await new Promise(resolve => setTimeout(resolve, 100));
+        // Adaptive delay based on response time
+        const delay = Math.min(200, Math.max(50, responseTime * 0.1));
+        await new Promise(resolve => setTimeout(resolve, delay));
         
       } catch (error) {
         failCount++;
-        // Wait 100ms even on error
+        requestCount++;
         await new Promise(resolve => setTimeout(resolve, 100));
       }
+      
+      // Break if we've been testing for too long (safety measure)
+      if (requestCount > 100) break;
     }
 
     const totalRequests = successCount + failCount;
     const averageResponseTime = responses.length > 0 
-      ? responses.reduce((a, b) => a + b, 0) / responses.length 
+      ? Math.round(responses.reduce((a, b) => a + b, 0) / responses.length)
       : 0;
 
     return {
       averageResponseTime,
-      successRate: totalRequests > 0 ? (successCount / totalRequests) * 100 : 0,
-      errorRate: totalRequests > 0 ? (failCount / totalRequests) * 100 : 0,
+      successRate: totalRequests > 0 ? Math.round((successCount / totalRequests) * 100 * 100) / 100 : 0,
+      errorRate: totalRequests > 0 ? Math.round((failCount / totalRequests) * 100 * 100) / 100 : 0,
       totalRequests,
       successfulRequests: successCount,
       failedRequests: failCount

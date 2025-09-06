@@ -169,7 +169,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Benchmark routes
   app.get('/api/benchmarks', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = await getUserIdFromRequest(req);
+      if (!userId) {
+        return res.status(404).json({ message: "User not found" });
+      }
       const benchmarks = await storage.getBenchmarksByUserId(userId);
       res.json(benchmarks);
     } catch (error) {
@@ -180,7 +183,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post('/api/benchmarks', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = await getUserIdFromRequest(req);
+      if (!userId) {
+        return res.status(404).json({ message: "User not found" });
+      }
       const data = insertBenchmarkSchema.parse({ ...req.body, userId });
       
       // Verify application ownership
@@ -204,7 +210,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get('/api/benchmarks/application/:applicationId', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = await getUserIdFromRequest(req);
       const application = await storage.getApplicationById(req.params.applicationId);
       
       if (!application || application.userId !== userId) {
@@ -222,7 +228,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Performance metrics routes
   app.get('/api/performance/:applicationId', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = await getUserIdFromRequest(req);
       const application = await storage.getApplicationById(req.params.applicationId);
       
       if (!application || application.userId !== userId) {
@@ -240,7 +246,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Export routes
   app.get('/api/export/applications', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = await getUserIdFromRequest(req);
+      if (!userId) {
+        return res.status(404).json({ message: "User not found" });
+      }
       const format = req.query.format || 'csv';
       
       const applications = await storage.getApplicationsByUserId(userId);

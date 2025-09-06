@@ -1,0 +1,1230 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ObjectiveEval - Software Evaluation Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                borderRadius: {
+                    lg: "var(--radius)",
+                    md: "calc(var(--radius) - 2px)",
+                    sm: "calc(var(--radius) - 4px)",
+                },
+                colors: {
+                    background: "var(--background)",
+                    foreground: "var(--foreground)",
+                    card: {
+                        DEFAULT: "var(--card)",
+                        foreground: "var(--card-foreground)",
+                    },
+                    popover: {
+                        DEFAULT: "var(--popover)",
+                        foreground: "var(--popover-foreground)",
+                    },
+                    primary: {
+                        DEFAULT: "var(--primary)",
+                        foreground: "var(--primary-foreground)",
+                    },
+                    secondary: {
+                        DEFAULT: "var(--secondary)",
+                        foreground: "var(--secondary-foreground)",
+                    },
+                    muted: {
+                        DEFAULT: "var(--muted)",
+                        foreground: "var(--muted-foreground)",
+                    },
+                    accent: {
+                        DEFAULT: "var(--accent)",
+                        foreground: "var(--accent-foreground)",
+                    },
+                    destructive: {
+                        DEFAULT: "var(--destructive)",
+                        foreground: "var(--destructive-foreground)",
+                    },
+                    border: "var(--border)",
+                    input: "var(--input)",
+                    ring: "var(--ring)",
+                    chart: {
+                        "1": "var(--chart-1)",
+                        "2": "var(--chart-2)",
+                        "3": "var(--chart-3)",
+                        "4": "var(--chart-4)",
+                        "5": "var(--chart-5)",
+                    }
+                },
+                fontFamily: {
+                    sans: ["var(--font-sans)"],
+                    serif: ["var(--font-serif)"],
+                    mono: ["var(--font-mono)"],
+                }
+            },
+        }
+    };
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --radius: 8px;
+            --background: hsl(0 0% 100%);
+            --foreground: hsl(222 84% 5%);
+            --card: hsl(0 0% 100%);
+            --card-foreground: hsl(222 84% 5%);
+            --popover: hsl(0 0% 100%);
+            --popover-foreground: hsl(222 84% 5%);
+            --primary: hsl(221 83% 53%);
+            --primary-foreground: hsl(210 40% 98%);
+            --secondary: hsl(210 40% 96%);
+            --secondary-foreground: hsl(215 16% 47%);
+            --muted: hsl(210 40% 96%);
+            --muted-foreground: hsl(215 16% 47%);
+            --accent: hsl(210 40% 96%);
+            --accent-foreground: hsl(222 84% 5%);
+            --destructive: hsl(0 84% 60%);
+            --destructive-foreground: hsl(210 40% 98%);
+            --border: hsl(214 32% 91%);
+            --input: hsl(214 32% 91%);
+            --ring: hsl(221 83% 53%);
+            --chart-1: hsl(221 83% 53%);
+            --chart-2: hsl(142 71% 45%);
+            --chart-3: hsl(38 92% 50%);
+            --chart-4: hsl(0 84% 60%);
+            --chart-5: hsl(280 100% 70%);
+            --font-sans: 'Inter', ui-sans-serif, system-ui;
+        }
+        
+        body {
+            font-family: var(--font-sans);
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-background text-foreground min-h-screen">
+    
+    <!-- Login Screen (Initially Hidden) -->
+    <div id="loginScreen" class="hidden min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div class="bg-card p-8 rounded-lg shadow-lg w-full max-w-md border border-border">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold text-primary mb-2">ObjectiveEval</h1>
+                <p class="text-muted-foreground">Professional Software Evaluation Platform</p>
+            </div>
+            
+            <div class="space-y-4">
+                <button class="w-full flex items-center justify-center gap-3 bg-white border border-border rounded-lg py-3 px-4 hover:bg-secondary transition-colors">
+                    <i class="fab fa-google text-red-500"></i>
+                    <span class="font-medium">Continue with Google</span>
+                </button>
+                
+                <button class="w-full flex items-center justify-center gap-3 bg-gray-900 text-white rounded-lg py-3 px-4 hover:bg-gray-800 transition-colors">
+                    <i class="fab fa-github"></i>
+                    <span class="font-medium">Continue with GitHub</span>
+                </button>
+            </div>
+            
+            <p class="text-xs text-muted-foreground text-center mt-6">
+                By continuing, you agree to our Terms of Service and Privacy Policy
+            </p>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div id="mainApp" class="flex h-screen bg-background">
+        
+        <!-- Sidebar -->
+        <aside class="w-64 bg-card border-r border-border flex flex-col">
+            <div class="p-6 border-b border-border">
+                <h1 class="text-xl font-bold text-primary">ObjectiveEval</h1>
+                <p class="text-sm text-muted-foreground mt-1">Software Evaluation</p>
+            </div>
+            
+            <nav class="flex-1 p-4">
+                <ul class="space-y-2">
+                    <li>
+                        <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary text-primary-foreground" data-view="dashboard">
+                            <i class="fas fa-chart-bar w-4"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-secondary text-foreground" data-view="applications">
+                            <i class="fas fa-layer-group w-4"></i>
+                            <span>Applications</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-secondary text-foreground" data-view="benchmarks">
+                            <i class="fas fa-tachometer-alt w-4"></i>
+                            <span>Benchmarks</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-secondary text-foreground" data-view="compare">
+                            <i class="fas fa-balance-scale w-4"></i>
+                            <span>Compare</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-secondary text-foreground" data-view="reports">
+                            <i class="fas fa-file-export w-4"></i>
+                            <span>Reports</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="p-4 border-t border-border">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-primary-foreground font-medium">
+                        JD
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm font-medium">John Doe</p>
+                        <p class="text-xs text-muted-foreground">john@example.com</p>
+                    </div>
+                    <button class="text-muted-foreground hover:text-foreground">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-auto">
+            
+            <!-- Dashboard View -->
+            <div id="dashboardView" class="view-content">
+                <header class="bg-card border-b border-border px-6 py-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h2 class="text-2xl font-bold">Dashboard</h2>
+                            <p class="text-muted-foreground">Overview of all software evaluations</p>
+                        </div>
+                        <button class="bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors">
+                            <i class="fas fa-plus mr-2"></i>
+                            Add Application
+                        </button>
+                    </div>
+                </header>
+
+                <div class="p-6">
+                    <!-- Stats Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                        <div class="bg-card p-6 rounded-lg border border-border">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-muted-foreground">Total Applications</p>
+                                    <p class="text-2xl font-bold">12</p>
+                                </div>
+                                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-layer-group text-blue-600"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-card p-6 rounded-lg border border-border">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-muted-foreground">Avg Response Time</p>
+                                    <p class="text-2xl font-bold">245ms</p>
+                                </div>
+                                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-clock text-green-600"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-card p-6 rounded-lg border border-border">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-muted-foreground">Avg Uptime</p>
+                                    <p class="text-2xl font-bold">99.7%</p>
+                                </div>
+                                <div class="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-check-circle text-emerald-600"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-card p-6 rounded-lg border border-border">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-muted-foreground">Active Benchmarks</p>
+                                    <p class="text-2xl font-bold">8</p>
+                                </div>
+                                <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-tachometer-alt text-purple-600"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Applications -->
+                    <div class="bg-card rounded-lg border border-border">
+                        <div class="p-6 border-b border-border">
+                            <h3 class="text-lg font-semibold">Recent Applications</h3>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-muted">
+                                    <tr>
+                                        <th class="text-left p-4 font-medium text-sm">Application</th>
+                                        <th class="text-left p-4 font-medium text-sm">Performance Score</th>
+                                        <th class="text-left p-4 font-medium text-sm">Uptime</th>
+                                        <th class="text-left p-4 font-medium text-sm">Integrations</th>
+                                        <th class="text-left p-4 font-medium text-sm">Last Updated</th>
+                                        <th class="text-left p-4 font-medium text-sm">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="border-b border-border">
+                                        <td class="p-4">
+                                            <div class="flex items-center gap-3">
+                                                <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center text-white font-bold">S</div>
+                                                <div>
+                                                    <p class="font-medium">Stripe API</p>
+                                                    <p class="text-xs text-muted-foreground">stripe.com</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="p-4">
+                                            <div class="flex items-center gap-2">
+                                                <div class="w-16 bg-secondary rounded-full h-2">
+                                                    <div class="w-4/5 bg-green-500 h-2 rounded-full"></div>
+                                                </div>
+                                                <span class="text-sm font-medium">87</span>
+                                            </div>
+                                        </td>
+                                        <td class="p-4">
+                                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">99.9%</span>
+                                        </td>
+                                        <td class="p-4">
+                                            <span class="text-sm">24 APIs</span>
+                                        </td>
+                                        <td class="p-4">
+                                            <span class="text-sm text-muted-foreground">2 hours ago</span>
+                                        </td>
+                                        <td class="p-4">
+                                            <button class="text-primary hover:text-primary/80">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr class="border-b border-border">
+                                        <td class="p-4">
+                                            <div class="flex items-center gap-3">
+                                                <div class="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center text-white font-bold">T</div>
+                                                <div>
+                                                    <p class="font-medium">Twilio API</p>
+                                                    <p class="text-xs text-muted-foreground">twilio.com</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="p-4">
+                                            <div class="flex items-center gap-2">
+                                                <div class="w-16 bg-secondary rounded-full h-2">
+                                                    <div class="w-3/5 bg-yellow-500 h-2 rounded-full"></div>
+                                                </div>
+                                                <span class="text-sm font-medium">72</span>
+                                            </div>
+                                        </td>
+                                        <td class="p-4">
+                                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">99.8%</span>
+                                        </td>
+                                        <td class="p-4">
+                                            <span class="text-sm">18 APIs</span>
+                                        </td>
+                                        <td class="p-4">
+                                            <span class="text-sm text-muted-foreground">4 hours ago</span>
+                                        </td>
+                                        <td class="p-4">
+                                            <button class="text-primary hover:text-primary/80">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr class="border-b border-border">
+                                        <td class="p-4">
+                                            <div class="flex items-center gap-3">
+                                                <div class="w-8 h-8 bg-red-500 rounded-lg flex items-center justify-center text-white font-bold">S</div>
+                                                <div>
+                                                    <p class="font-medium">SendGrid API</p>
+                                                    <p class="text-xs text-muted-foreground">sendgrid.com</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="p-4">
+                                            <div class="flex items-center gap-2">
+                                                <div class="w-16 bg-secondary rounded-full h-2">
+                                                    <div class="w-5/6 bg-green-500 h-2 rounded-full"></div>
+                                                </div>
+                                                <span class="text-sm font-medium">91</span>
+                                            </div>
+                                        </td>
+                                        <td class="p-4">
+                                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">99.6%</span>
+                                        </td>
+                                        <td class="p-4">
+                                            <span class="text-sm">12 APIs</span>
+                                        </td>
+                                        <td class="p-4">
+                                            <span class="text-sm text-muted-foreground">6 hours ago</span>
+                                        </td>
+                                        <td class="p-4">
+                                            <button class="text-primary hover:text-primary/80">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Applications View -->
+            <div id="applicationsView" class="view-content hidden">
+                <header class="bg-card border-b border-border px-6 py-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h2 class="text-2xl font-bold">Applications</h2>
+                            <p class="text-muted-foreground">Manage and monitor your software applications</p>
+                        </div>
+                        <button id="addAppBtn" class="bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors">
+                            <i class="fas fa-plus mr-2"></i>
+                            Add Application
+                        </button>
+                    </div>
+                </header>
+
+                <div class="p-6">
+                    <!-- Search and Filters -->
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="flex-1 relative">
+                            <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground"></i>
+                            <input type="text" placeholder="Search applications..." class="w-full pl-10 pr-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent">
+                        </div>
+                        <select class="px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent">
+                            <option>All Categories</option>
+                            <option>Payment Processing</option>
+                            <option>Communication</option>
+                            <option>Analytics</option>
+                        </select>
+                        <select class="px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent">
+                            <option>All Status</option>
+                            <option>Active</option>
+                            <option>Monitoring</option>
+                            <option>Error</option>
+                        </select>
+                    </div>
+
+                    <!-- Applications Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="bg-card rounded-lg border border-border p-6 hover:shadow-md transition-shadow">
+                            <div class="flex items-start justify-between mb-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center text-white font-bold text-lg">S</div>
+                                    <div>
+                                        <h3 class="font-semibold">Stripe API</h3>
+                                        <p class="text-sm text-muted-foreground">stripe.com</p>
+                                    </div>
+                                </div>
+                                <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">Active</span>
+                            </div>
+                            
+                            <div class="space-y-3 mb-4">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-muted-foreground">Performance</span>
+                                    <span class="text-sm font-medium">87/100</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-muted-foreground">Uptime</span>
+                                    <span class="text-sm font-medium text-green-600">99.9%</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-muted-foreground">Response Time</span>
+                                    <span class="text-sm font-medium">142ms</span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex gap-2">
+                                <button class="flex-1 bg-primary text-primary-foreground py-2 px-3 rounded-md text-sm hover:bg-primary/90 transition-colors">
+                                    View Details
+                                </button>
+                                <button class="px-3 py-2 border border-border rounded-md hover:bg-secondary transition-colors">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="bg-card rounded-lg border border-border p-6 hover:shadow-md transition-shadow">
+                            <div class="flex items-start justify-between mb-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center text-white font-bold text-lg">T</div>
+                                    <div>
+                                        <h3 class="font-semibold">Twilio API</h3>
+                                        <p class="text-sm text-muted-foreground">twilio.com</p>
+                                    </div>
+                                </div>
+                                <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs font-medium">Testing</span>
+                            </div>
+                            
+                            <div class="space-y-3 mb-4">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-muted-foreground">Performance</span>
+                                    <span class="text-sm font-medium">72/100</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-muted-foreground">Uptime</span>
+                                    <span class="text-sm font-medium text-green-600">99.8%</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-muted-foreground">Response Time</span>
+                                    <span class="text-sm font-medium">298ms</span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex gap-2">
+                                <button class="flex-1 bg-primary text-primary-foreground py-2 px-3 rounded-md text-sm hover:bg-primary/90 transition-colors">
+                                    View Details
+                                </button>
+                                <button class="px-3 py-2 border border-border rounded-md hover:bg-secondary transition-colors">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="bg-card rounded-lg border border-border p-6 hover:shadow-md transition-shadow">
+                            <div class="flex items-start justify-between mb-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-12 h-12 bg-red-500 rounded-lg flex items-center justify-center text-white font-bold text-lg">S</div>
+                                    <div>
+                                        <h3 class="font-semibold">SendGrid API</h3>
+                                        <p class="text-sm text-muted-foreground">sendgrid.com</p>
+                                    </div>
+                                </div>
+                                <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">Active</span>
+                            </div>
+                            
+                            <div class="space-y-3 mb-4">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-muted-foreground">Performance</span>
+                                    <span class="text-sm font-medium">91/100</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-muted-foreground">Uptime</span>
+                                    <span class="text-sm font-medium text-green-600">99.6%</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-muted-foreground">Response Time</span>
+                                    <span class="text-sm font-medium">89ms</span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex gap-2">
+                                <button class="flex-1 bg-primary text-primary-foreground py-2 px-3 rounded-md text-sm hover:bg-primary/90 transition-colors">
+                                    View Details
+                                </button>
+                                <button class="px-3 py-2 border border-border rounded-md hover:bg-secondary transition-colors">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Benchmarks View -->
+            <div id="benchmarksView" class="view-content hidden">
+                <header class="bg-card border-b border-border px-6 py-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h2 class="text-2xl font-bold">Benchmarks</h2>
+                            <p class="text-muted-foreground">Performance testing and monitoring</p>
+                        </div>
+                        <button class="bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors">
+                            <i class="fas fa-play mr-2"></i>
+                            Run New Test
+                        </button>
+                    </div>
+                </header>
+
+                <div class="p-6">
+                    <!-- Test Configuration -->
+                    <div class="bg-card rounded-lg border border-border p-6 mb-6">
+                        <h3 class="text-lg font-semibold mb-4">Quick Benchmark Test</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Select Application</label>
+                                <select class="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent">
+                                    <option>Stripe API</option>
+                                    <option>Twilio API</option>
+                                    <option>SendGrid API</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Test Type</label>
+                                <select class="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent">
+                                    <option>Response Time</option>
+                                    <option>Load Test</option>
+                                    <option>Stress Test</option>
+                                    <option>Reliability Test</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Duration</label>
+                                <select class="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent">
+                                    <option>1 minute</option>
+                                    <option>5 minutes</option>
+                                    <option>15 minutes</option>
+                                    <option>1 hour</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="flex justify-end mt-4">
+                            <button id="runBenchmarkBtn" class="bg-primary text-primary-foreground px-6 py-2 rounded-lg hover:bg-primary/90 transition-colors">
+                                <i class="fas fa-play mr-2"></i>
+                                Start Benchmark
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Running Tests -->
+                    <div id="runningTests" class="bg-card rounded-lg border border-border p-6 mb-6 hidden">
+                        <h3 class="text-lg font-semibold mb-4">Running Tests</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between p-4 bg-blue-50 rounded-lg border border-blue-200">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-spinner fa-spin text-white text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium">Stripe API - Response Time Test</p>
+                                        <p class="text-sm text-blue-600">Running... 45% complete</p>
+                                    </div>
+                                </div>
+                                <button class="text-red-600 hover:text-red-700">
+                                    <i class="fas fa-stop"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Test Results -->
+                    <div class="bg-card rounded-lg border border-border">
+                        <div class="p-6 border-b border-border">
+                            <h3 class="text-lg font-semibold">Recent Test Results</h3>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-muted">
+                                    <tr>
+                                        <th class="text-left p-4 font-medium text-sm">Application</th>
+                                        <th class="text-left p-4 font-medium text-sm">Test Type</th>
+                                        <th class="text-left p-4 font-medium text-sm">Avg Response</th>
+                                        <th class="text-left p-4 font-medium text-sm">Success Rate</th>
+                                        <th class="text-left p-4 font-medium text-sm">Duration</th>
+                                        <th class="text-left p-4 font-medium text-sm">Timestamp</th>
+                                        <th class="text-left p-4 font-medium text-sm">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="border-b border-border">
+                                        <td class="p-4">
+                                            <div class="flex items-center gap-2">
+                                                <div class="w-6 h-6 bg-blue-500 rounded text-white text-xs flex items-center justify-center font-bold">S</div>
+                                                <span class="font-medium">Stripe API</span>
+                                            </div>
+                                        </td>
+                                        <td class="p-4">
+                                            <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">Response Time</span>
+                                        </td>
+                                        <td class="p-4">
+                                            <span class="font-medium">142ms</span>
+                                        </td>
+                                        <td class="p-4">
+                                            <span class="text-green-600 font-medium">99.8%</span>
+                                        </td>
+                                        <td class="p-4">
+                                            <span class="text-sm">5 minutes</span>
+                                        </td>
+                                        <td class="p-4">
+                                            <span class="text-sm text-muted-foreground">2 hours ago</span>
+                                        </td>
+                                        <td class="p-4">
+                                            <div class="flex gap-2">
+                                                <button class="text-primary hover:text-primary/80">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="text-muted-foreground hover:text-foreground">
+                                                    <i class="fas fa-download"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr class="border-b border-border">
+                                        <td class="p-4">
+                                            <div class="flex items-center gap-2">
+                                                <div class="w-6 h-6 bg-purple-500 rounded text-white text-xs flex items-center justify-center font-bold">T</div>
+                                                <span class="font-medium">Twilio API</span>
+                                            </div>
+                                        </td>
+                                        <td class="p-4">
+                                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">Load Test</span>
+                                        </td>
+                                        <td class="p-4">
+                                            <span class="font-medium">298ms</span>
+                                        </td>
+                                        <td class="p-4">
+                                            <span class="text-yellow-600 font-medium">97.2%</span>
+                                        </td>
+                                        <td class="p-4">
+                                            <span class="text-sm">15 minutes</span>
+                                        </td>
+                                        <td class="p-4">
+                                            <span class="text-sm text-muted-foreground">4 hours ago</span>
+                                        </td>
+                                        <td class="p-4">
+                                            <div class="flex gap-2">
+                                                <button class="text-primary hover:text-primary/80">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="text-muted-foreground hover:text-foreground">
+                                                    <i class="fas fa-download"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Compare View -->
+            <div id="compareView" class="view-content hidden">
+                <header class="bg-card border-b border-border px-6 py-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h2 class="text-2xl font-bold">Compare Applications</h2>
+                            <p class="text-muted-foreground">Side-by-side application comparison</p>
+                        </div>
+                    </div>
+                </header>
+
+                <div class="p-6">
+                    <!-- Application Selection -->
+                    <div class="bg-card rounded-lg border border-border p-6 mb-6">
+                        <h3 class="text-lg font-semibold mb-4">Select Applications to Compare</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Application 1</label>
+                                <select class="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent">
+                                    <option>Select application...</option>
+                                    <option selected>Stripe API</option>
+                                    <option>Twilio API</option>
+                                    <option>SendGrid API</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Application 2</label>
+                                <select class="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent">
+                                    <option>Select application...</option>
+                                    <option>Stripe API</option>
+                                    <option selected>Twilio API</option>
+                                    <option>SendGrid API</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Application 3 (Optional)</label>
+                                <select class="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent">
+                                    <option>Select application...</option>
+                                    <option>Stripe API</option>
+                                    <option>Twilio API</option>
+                                    <option selected>SendGrid API</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Comparison Results -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Application 1 -->
+                        <div class="bg-card rounded-lg border border-border overflow-hidden">
+                            <div class="bg-blue-500 text-white p-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center text-white font-bold">S</div>
+                                    <div>
+                                        <h3 class="font-semibold">Stripe API</h3>
+                                        <p class="text-sm opacity-90">stripe.com</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="p-6 space-y-4">
+                                <div>
+                                    <div class="flex justify-between items-center mb-2">
+                                        <span class="text-sm text-muted-foreground">Performance Score</span>
+                                        <span class="font-bold text-lg">87/100</span>
+                                    </div>
+                                    <div class="w-full bg-secondary rounded-full h-2">
+                                        <div class="w-[87%] bg-blue-500 h-2 rounded-full"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="space-y-3">
+                                    <div class="flex justify-between">
+                                        <span class="text-sm">Response Time</span>
+                                        <span class="font-medium text-green-600">142ms</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-sm">Uptime</span>
+                                        <span class="font-medium text-green-600">99.9%</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-sm">Error Rate</span>
+                                        <span class="font-medium text-green-600">0.1%</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-sm">Integrations</span>
+                                        <span class="font-medium">24 APIs</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-sm">Documentation</span>
+                                        <span class="font-medium text-green-600">Excellent</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Application 2 -->
+                        <div class="bg-card rounded-lg border border-border overflow-hidden">
+                            <div class="bg-purple-500 text-white p-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center text-white font-bold">T</div>
+                                    <div>
+                                        <h3 class="font-semibold">Twilio API</h3>
+                                        <p class="text-sm opacity-90">twilio.com</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="p-6 space-y-4">
+                                <div>
+                                    <div class="flex justify-between items-center mb-2">
+                                        <span class="text-sm text-muted-foreground">Performance Score</span>
+                                        <span class="font-bold text-lg">72/100</span>
+                                    </div>
+                                    <div class="w-full bg-secondary rounded-full h-2">
+                                        <div class="w-[72%] bg-purple-500 h-2 rounded-full"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="space-y-3">
+                                    <div class="flex justify-between">
+                                        <span class="text-sm">Response Time</span>
+                                        <span class="font-medium text-yellow-600">298ms</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-sm">Uptime</span>
+                                        <span class="font-medium text-green-600">99.8%</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-sm">Error Rate</span>
+                                        <span class="font-medium text-yellow-600">0.2%</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-sm">Integrations</span>
+                                        <span class="font-medium">18 APIs</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-sm">Documentation</span>
+                                        <span class="font-medium text-green-600">Good</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Application 3 -->
+                        <div class="bg-card rounded-lg border border-border overflow-hidden">
+                            <div class="bg-red-500 text-white p-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center text-white font-bold">S</div>
+                                    <div>
+                                        <h3 class="font-semibold">SendGrid API</h3>
+                                        <p class="text-sm opacity-90">sendgrid.com</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="p-6 space-y-4">
+                                <div>
+                                    <div class="flex justify-between items-center mb-2">
+                                        <span class="text-sm text-muted-foreground">Performance Score</span>
+                                        <span class="font-bold text-lg">91/100</span>
+                                    </div>
+                                    <div class="w-full bg-secondary rounded-full h-2">
+                                        <div class="w-[91%] bg-red-500 h-2 rounded-full"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="space-y-3">
+                                    <div class="flex justify-between">
+                                        <span class="text-sm">Response Time</span>
+                                        <span class="font-medium text-green-600">89ms</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-sm">Uptime</span>
+                                        <span class="font-medium text-green-600">99.6%</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-sm">Error Rate</span>
+                                        <span class="font-medium text-green-600">0.05%</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-sm">Integrations</span>
+                                        <span class="font-medium">12 APIs</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-sm">Documentation</span>
+                                        <span class="font-medium text-green-600">Excellent</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Export Options -->
+                    <div class="mt-6 flex justify-end">
+                        <button class="bg-primary text-primary-foreground px-6 py-2 rounded-lg hover:bg-primary/90 transition-colors">
+                            <i class="fas fa-download mr-2"></i>
+                            Export Comparison
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reports View -->
+            <div id="reportsView" class="view-content hidden">
+                <header class="bg-card border-b border-border px-6 py-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h2 class="text-2xl font-bold">Reports & Export</h2>
+                            <p class="text-muted-foreground">Generate and download evaluation reports</p>
+                        </div>
+                    </div>
+                </header>
+
+                <div class="p-6">
+                    <!-- Export Options -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                        <!-- Quick Export -->
+                        <div class="bg-card rounded-lg border border-border p-6">
+                            <h3 class="text-lg font-semibold mb-4">Quick Export</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Export Type</label>
+                                    <select class="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent">
+                                        <option>All Applications Summary</option>
+                                        <option>Individual Application Report</option>
+                                        <option>Comparison Report</option>
+                                        <option>Benchmark History</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Format</label>
+                                    <div class="flex gap-4">
+                                        <label class="flex items-center">
+                                            <input type="radio" name="format" value="csv" class="mr-2" checked>
+                                            <span class="text-sm">CSV</span>
+                                        </label>
+                                        <label class="flex items-center">
+                                            <input type="radio" name="format" value="pdf" class="mr-2">
+                                            <span class="text-sm">PDF</span>
+                                        </label>
+                                        <label class="flex items-center">
+                                            <input type="radio" name="format" value="json" class="mr-2">
+                                            <span class="text-sm">JSON</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <button class="w-full bg-primary text-primary-foreground py-2 px-4 rounded-lg hover:bg-primary/90 transition-colors">
+                                    <i class="fas fa-download mr-2"></i>
+                                    Generate & Download
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Scheduled Reports -->
+                        <div class="bg-card rounded-lg border border-border p-6">
+                            <h3 class="text-lg font-semibold mb-4">Scheduled Reports</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Frequency</label>
+                                    <select class="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent">
+                                        <option>Daily</option>
+                                        <option>Weekly</option>
+                                        <option>Monthly</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Email Recipients</label>
+                                    <input type="email" placeholder="Enter email addresses..." class="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent">
+                                </div>
+                                <button class="w-full bg-secondary text-secondary-foreground py-2 px-4 rounded-lg hover:bg-secondary/80 transition-colors">
+                                    <i class="fas fa-calendar mr-2"></i>
+                                    Setup Schedule
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Downloads -->
+                    <div class="bg-card rounded-lg border border-border">
+                        <div class="p-6 border-b border-border">
+                            <h3 class="text-lg font-semibold">Recent Downloads</h3>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-muted">
+                                    <tr>
+                                        <th class="text-left p-4 font-medium text-sm">Report Name</th>
+                                        <th class="text-left p-4 font-medium text-sm">Type</th>
+                                        <th class="text-left p-4 font-medium text-sm">Format</th>
+                                        <th class="text-left p-4 font-medium text-sm">Generated</th>
+                                        <th class="text-left p-4 font-medium text-sm">Size</th>
+                                        <th class="text-left p-4 font-medium text-sm">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="border-b border-border">
+                                        <td class="p-4">
+                                            <span class="font-medium">All Applications Summary - Dec 2024</span>
+                                        </td>
+                                        <td class="p-4">
+                                            <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">Summary</span>
+                                        </td>
+                                        <td class="p-4">
+                                            <span class="text-sm">CSV</span>
+                                        </td>
+                                        <td class="p-4">
+                                            <span class="text-sm text-muted-foreground">2 hours ago</span>
+                                        </td>
+                                        <td class="p-4">
+                                            <span class="text-sm">156 KB</span>
+                                        </td>
+                                        <td class="p-4">
+                                            <div class="flex gap-2">
+                                                <button class="text-primary hover:text-primary/80">
+                                                    <i class="fas fa-download"></i>
+                                                </button>
+                                                <button class="text-muted-foreground hover:text-foreground">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr class="border-b border-border">
+                                        <td class="p-4">
+                                            <span class="font-medium">Stripe vs Twilio Comparison</span>
+                                        </td>
+                                        <td class="p-4">
+                                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">Comparison</span>
+                                        </td>
+                                        <td class="p-4">
+                                            <span class="text-sm">PDF</span>
+                                        </td>
+                                        <td class="p-4">
+                                            <span class="text-sm text-muted-foreground">1 day ago</span>
+                                        </td>
+                                        <td class="p-4">
+                                            <span class="text-sm">2.1 MB</span>
+                                        </td>
+                                        <td class="p-4">
+                                            <div class="flex gap-2">
+                                                <button class="text-primary hover:text-primary/80">
+                                                    <i class="fas fa-download"></i>
+                                                </button>
+                                                <button class="text-muted-foreground hover:text-foreground">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Application Modal -->
+    <div id="addAppModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
+        <div class="bg-card rounded-lg p-6 w-full max-w-md mx-4 border border-border">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold">Add New Application</h3>
+                <button id="closeModal" class="text-muted-foreground hover:text-foreground">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium mb-2">Application Name</label>
+                    <input type="text" placeholder="e.g., Stripe API" class="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium mb-2">URL or Endpoint</label>
+                    <input type="url" placeholder="https://api.stripe.com" class="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium mb-2">Category</label>
+                    <select class="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent">
+                        <option>Payment Processing</option>
+                        <option>Communication</option>
+                        <option>Analytics</option>
+                        <option>Storage</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium mb-2">Documentation URL (Optional)</label>
+                    <input type="url" placeholder="https://stripe.com/docs" class="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent">
+                </div>
+                
+                <div class="flex gap-3 pt-4">
+                    <button type="button" id="cancelModal" class="flex-1 py-2 px-4 border border-border rounded-lg hover:bg-secondary transition-colors">
+                        Cancel
+                    </button>
+                    <button type="submit" class="flex-1 bg-primary text-primary-foreground py-2 px-4 rounded-lg hover:bg-primary/90 transition-colors">
+                        Add Application
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Simple view switching functionality
+        (function() {
+            const views = ['dashboard', 'applications', 'benchmarks', 'compare', 'reports'];
+            const navLinks = document.querySelectorAll('[data-view]');
+            const viewElements = views.map(view => document.getElementById(view + 'View'));
+            
+            // Function to show a specific view
+            function showView(targetView) {
+                // Hide all views
+                viewElements.forEach(view => {
+                    if (view) view.classList.add('hidden');
+                });
+                
+                // Show target view
+                const targetElement = document.getElementById(targetView + 'View');
+                if (targetElement) {
+                    targetElement.classList.remove('hidden');
+                    targetElement.classList.add('fade-in');
+                }
+                
+                // Update active navigation
+                navLinks.forEach(link => {
+                    link.classList.remove('bg-primary', 'text-primary-foreground');
+                    link.classList.add('hover:bg-secondary', 'text-foreground');
+                });
+                
+                const activeLink = document.querySelector(`[data-view="${targetView}"]`);
+                if (activeLink) {
+                    activeLink.classList.add('bg-primary', 'text-primary-foreground');
+                    activeLink.classList.remove('hover:bg-secondary', 'text-foreground');
+                }
+            }
+            
+            // Add click handlers to navigation links
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetView = link.getAttribute('data-view');
+                    showView(targetView);
+                });
+            });
+            
+            // Modal functionality
+            const addAppBtn = document.getElementById('addAppBtn');
+            const addAppModal = document.getElementById('addAppModal');
+            const closeModal = document.getElementById('closeModal');
+            const cancelModal = document.getElementById('cancelModal');
+            
+            if (addAppBtn && addAppModal) {
+                addAppBtn.addEventListener('click', () => {
+                    addAppModal.classList.remove('hidden');
+                    addAppModal.classList.add('flex');
+                });
+            }
+            
+            function hideModal() {
+                if (addAppModal) {
+                    addAppModal.classList.add('hidden');
+                    addAppModal.classList.remove('flex');
+                }
+            }
+            
+            if (closeModal) closeModal.addEventListener('click', hideModal);
+            if (cancelModal) cancelModal.addEventListener('click', hideModal);
+            
+            // Close modal on backdrop click
+            if (addAppModal) {
+                addAppModal.addEventListener('click', (e) => {
+                    if (e.target === addAppModal) {
+                        hideModal();
+                    }
+                });
+            }
+            
+            // Benchmark test simulation
+            const runBenchmarkBtn = document.getElementById('runBenchmarkBtn');
+            const runningTests = document.getElementById('runningTests');
+            
+            if (runBenchmarkBtn && runningTests) {
+                runBenchmarkBtn.addEventListener('click', () => {
+                    runningTests.classList.remove('hidden');
+                    runBenchmarkBtn.disabled = true;
+                    runBenchmarkBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Starting Test...';
+                    
+                    // TODO: Implement actual benchmark testing logic
+                    // This would integrate with backend API to start real tests
+                    
+                    // Simulate test completion after 3 seconds
+                    setTimeout(() => {
+                        runningTests.classList.add('hidden');
+                        runBenchmarkBtn.disabled = false;
+                        runBenchmarkBtn.innerHTML = '<i class="fas fa-play mr-2"></i>Start Benchmark';
+                        
+                        // Show success message
+                        // TODO: Add toast notification system
+                        alert('Benchmark test completed successfully!');
+                    }, 3000);
+                });
+            }
+            
+            // Initialize dashboard view
+            showView('dashboard');
+        })();
+    </script>
+</body>
+</html>

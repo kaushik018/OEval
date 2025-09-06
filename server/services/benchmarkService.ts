@@ -54,13 +54,20 @@ class BenchmarkService {
         completedAt: new Date()
       });
 
-      // Create performance metrics record
-      const benchmark = await storage.updateBenchmark(benchmarkId, {});
-      const performanceScore = this.calculatePerformanceScore(result);
-      
-      // Get application ID from benchmark (need to fetch benchmark first)
-      // This is a simplified approach - in real implementation, we'd need to fetch the benchmark
-      // For now, we'll assume we have access to applicationId
+      // Get the benchmark to access applicationId for performance metrics
+      const benchmark = await storage.getBenchmarkById(benchmarkId);
+      if (benchmark) {
+        const performanceScore = this.calculatePerformanceScore(result);
+        
+        // Create performance metrics record
+        await storage.createPerformanceMetrics({
+          applicationId: benchmark.applicationId,
+          responseTime: result.averageResponseTime.toString(),
+          uptime: result.successRate.toString(),
+          errorRate: result.errorRate.toString(),
+          performanceScore: performanceScore
+        });
+      }
       
     } catch (error) {
       console.error('Benchmark test failed:', error);

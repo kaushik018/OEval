@@ -36,6 +36,7 @@ export interface IStorage {
   
   // Benchmark operations
   createBenchmark(benchmark: InsertBenchmark): Promise<Benchmark>;
+  getBenchmarkById(id: string): Promise<Benchmark | undefined>;
   getBenchmarksByApplicationId(applicationId: string): Promise<Benchmark[]>;
   getBenchmarksByUserId(userId: string): Promise<Benchmark[]>;
   updateBenchmark(id: string, data: Partial<Benchmark>): Promise<void>;
@@ -150,7 +151,16 @@ export class DatabaseStorage implements IStorage {
       .orderBy(desc(benchmarks.startedAt));
   }
 
+  async getBenchmarkById(id: string): Promise<Benchmark | undefined> {
+    const [benchmark] = await db.select().from(benchmarks).where(eq(benchmarks.id, id));
+    return benchmark;
+  }
+
   async updateBenchmark(id: string, data: Partial<Benchmark>): Promise<void> {
+    // Only update if there are actual values to set
+    if (Object.keys(data).length === 0) {
+      return;
+    }
     await db
       .update(benchmarks)
       .set(data)

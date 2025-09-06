@@ -1,0 +1,53 @@
+You are my AI software engineer. Please implement the following SaaS web app according to these detailed requirements:
+Title: Build a SaaS Application for Objective Software Evaluation
+
+Goal:
+Develop a SaaS web app that evaluates software applications based on objective metrics only (no user reviews, no subjective inputs). The evaluation should focus on:
+	1.	Performance Benchmarks (speed, resource usage, API latency, crash rate)
+	2.	Integration & Compatibility (supported platforms, APIs, external tools)
+	3.	Reliability & Availability (uptime %, SLA, error rate)
+
+Requirements:
+	•	Frontend: React (or Next.js) with a clean dashboard UI
+	•	Backend: Node.js/Express (or FastAPI if Python is better for benchmarks)
+	•	Database: PostgreSQL (structured data for apps, benchmarks, metrics)
+	•	Cloud: AWS or GCP (must support scaling + monitoring)
+	•	Authentication: OAuth2 (Google, GitHub login)
+	•	APIs:
+	•	REST/GraphQL API for accessing evaluation data
+	•	Webhooks for continuous updates (e.g., uptime monitoring feeds)
+	•	Benchmarking:
+	•	Implement test runners for API response times and error rates
+	•	Collect data from public status pages (for uptime)
+	•	Integration Checker:
+	•	Parse software documentation (via AI NLP) to detect available integrations
+	•	Store and categorize supported platforms/APIs
+	•	Reliability Metrics:
+	•	Fetch SLA/uptime info from providers’ status pages
+	•	Store daily uptime snapshots in DB
+
+AI Usage:
+	•	Use AI to:
+	•	Parse and summarize integration docs (to extract supported tools/platforms).
+	•	Validate benchmark data consistency (flag anomalies).
+	•	Do NOT use AI to summarize subjective user reviews. Only stick to measurable criteria.
+
+Key Features in MVP:
+	•	User login (Google/GitHub)
+	•	Add a software app for evaluation (manually or via URL input)
+	•	Dashboard showing:
+	•	Performance Benchmarks (response time, resource usage)
+	•	Integration/Compatibility (supported platforms, APIs)
+	•	Reliability/Availability (uptime, SLA, outages)
+	•	Comparison view (side-by-side comparison of 2–3 apps)
+	•	Export results as PDF/CSV
+
+Accuracy & Reliability:
+	•	Ensure benchmark tests run multiple times and average results (avoid outliers).
+	•	Use official APIs/status pages where possible (don’t rely on crowdsourced data).
+	•	Implement validation pipeline: flag unrealistic or missing data.
+
+Tech Notes:
+	•	Use Docker for containerization.
+	•	Implement CI/CD (GitHub Actions).
+	•	Add monitoring with Prometheus + Grafana.

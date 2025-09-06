@@ -29,7 +29,7 @@ interface Application {
 }
 
 export default function Compare() {
-  const [selectedApps, setSelectedApps] = useState<string[]>(['', '', '']);
+  const [selectedApps, setSelectedApps] = useState<string[]>(['', '', 'none']);
 
   const { data: applications = [] } = useQuery<Application[]>({
     queryKey: ["/api/applications"],
@@ -43,7 +43,7 @@ export default function Compare() {
 
   const getSelectedApplications = () => {
     return selectedApps
-      .filter(id => id !== '')
+      .filter(id => id !== '' && id !== 'none')
       .map(id => applications.find(app => app.id === id))
       .filter(Boolean) as Application[];
   };
@@ -153,7 +153,7 @@ export default function Compare() {
                     <SelectValue placeholder="Select application..." />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">None</SelectItem>
+                    <SelectItem value="none">None</SelectItem>
                     {applications.map((app) => (
                       <SelectItem 
                         key={app.id} 

@@ -65,15 +65,15 @@ export default function Sidebar() {
             return (
               <li key={item.name}>
                 <Link href={item.href}>
-                  <a className={cn(
-                    "flex items-center gap-3 px-3 py-2 rounded-lg transition-colors",
+                  <span className={cn(
+                    "flex items-center gap-3 px-3 py-2 rounded-lg transition-colors cursor-pointer",
                     isActive 
                       ? "bg-primary text-primary-foreground" 
                       : "hover:bg-secondary text-foreground"
                   )} data-testid={`nav-${item.name.toLowerCase()}`}>
                     <Icon className="w-4 h-4" />
                     <span>{item.name}</span>
-                  </a>
+                  </span>
                 </Link>
               </li>
             );

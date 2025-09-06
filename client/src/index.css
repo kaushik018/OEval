@@ -1,0 +1,124 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(0 0% 100%);
+  --foreground: hsl(222 84% 5%);
+  --card: hsl(0 0% 100%);
+  --card-foreground: hsl(222 84% 5%);
+  --popover: hsl(0 0% 100%);
+  --popover-foreground: hsl(222 84% 5%);
+  --primary: hsl(221 83% 53%);
+  --primary-foreground: hsl(210 40% 98%);
+  --secondary: hsl(210 40% 96%);
+  --secondary-foreground: hsl(215 16% 47%);
+  --muted: hsl(210 40% 96%);
+  --muted-foreground: hsl(215 16% 47%);
+  --accent: hsl(210 40% 96%);
+  --accent-foreground: hsl(222 84% 5%);
+  --destructive: hsl(0 84% 60%);
+  --destructive-foreground: hsl(210 40% 98%);
+  --border: hsl(214 32% 91%);
+  --input: hsl(214 32% 91%);
+  --ring: hsl(221 83% 53%);
+  --chart-1: hsl(221 83% 53%);
+  --chart-2: hsl(142 71% 45%);
+  --chart-3: hsl(38 92% 50%);
+  --chart-4: hsl(0 84% 60%);
+  --chart-5: hsl(280 100% 70%);
+  --sidebar: hsl(0 0% 100%);
+  --sidebar-foreground: hsl(222 84% 5%);
+  --sidebar-primary: hsl(221 83% 53%);
+  --sidebar-primary-foreground: hsl(210 40% 98%);
+  --sidebar-accent: hsl(210 40% 96%);
+  --sidebar-accent-foreground: hsl(222 84% 5%);
+  --sidebar-border: hsl(214 32% 91%);
+  --sidebar-ring: hsl(221 83% 53%);
+  --font-sans: 'Inter', ui-sans-serif, system-ui;
+  --font-serif: Georgia, serif;
+  --font-mono: Menlo, monospace;
+  --radius: 8px;
+  --shadow-2xs: 0px 2px 0px 0px hsl(221 83% 53% / 0.00);
+  --shadow-xs: 0px 2px 0px 0px hsl(221 83% 53% / 0.00);
+  --shadow-sm: 0px 2px 0px 0px hsl(221 83% 53% / 0.00), 0px 1px 2px -1px hsl(221 83% 53% / 0.00);
+  --shadow: 0px 2px 0px 0px hsl(221 83% 53% / 0.00), 0px 1px 2px -1px hsl(221 83% 53% / 0.00);
+  --shadow-md: 0px 2px 0px 0px hsl(221 83% 53% / 0.00), 0px 2px 4px -1px hsl(221 83% 53% / 0.00);
+  --shadow-lg: 0px 2px 0px 0px hsl(221 83% 53% / 0.00), 0px 4px 6px -1px hsl(221 83% 53% / 0.00);
+  --shadow-xl: 0px 2px 0px 0px hsl(221 83% 53% / 0.00), 0px 8px 10px -1px hsl(221 83% 53% / 0.00);
+  --shadow-2xl: 0px 2px 0px 0px hsl(221 83% 53% / 0.00);
+  --tracking-normal: 0em;
+  --spacing: 0.25rem;
+}
+
+.dark {
+  --background: hsl(0 0% 0%);
+  --foreground: hsl(200 6.6667% 91.1765%);
+  --card: hsl(228 9.8039% 10%);
+  --card-foreground: hsl(0 0% 85.0980%);
+  --popover: hsl(0 0% 0%);
+  --popover-foreground: hsl(200 6.6667% 91.1765%);
+  --primary: hsl(221 83% 53%);
+  --primary-foreground: hsl(0 0% 100%);
+  --secondary: hsl(195.0000 15.3846% 94.9020%);
+  --secondary-foreground: hsl(210 25% 7.8431%);
+  --muted: hsl(0 0% 9.4118%);
+  --muted-foreground: hsl(210 3.3898% 46.2745%);
+  --accent: hsl(205.7143 70% 7.8431%);
+  --accent-foreground: hsl(221 83% 53%);
+  --destructive: hsl(0 84% 60%);
+  --destructive-foreground: hsl(0 0% 100%);
+  --border: hsl(210 5.2632% 14.9020%);
+  --input: hsl(207.6923 27.6596% 18.4314%);
+  --ring: hsl(221 83% 53%);
+  --chart-1: hsl(221 83% 53%);
+  --chart-2: hsl(142 71% 45%);
+  --chart-3: hsl(38 92% 50%);
+  --chart-4: hsl(0 84% 60%);
+  --chart-5: hsl(280 100% 70%);
+  --sidebar: hsl(228 9.8039% 10%);
+  --sidebar-foreground: hsl(0 0% 85.0980%);
+  --sidebar-primary: hsl(221 83% 53%);
+  --sidebar-primary-foreground: hsl(0 0% 100%);
+  --sidebar-accent: hsl(205.7143 70% 7.8431%);
+  --sidebar-accent-foreground: hsl(221 83% 53%);
+  --sidebar-border: hsl(205.7143 15.7895% 26.0784%);
+  --sidebar-ring: hsl(221 83% 53%);
+  --font-sans: 'Inter', ui-sans-serif, system-ui;
+  --font-serif: Georgia, serif;
+  --font-mono: Menlo, monospace;
+  --radius: 8px;
+  --shadow-2xs: 0px 2px 0px 0px hsl(221 83% 53% / 0.00);
+  --shadow-xs: 0px 2px 0px 0px hsl(221 83% 53% / 0.00);
+  --shadow-sm: 0px 2px 0px 0px hsl(221 83% 53% / 0.00), 0px 1px 2px -1px hsl(221 83% 53% / 0.00);
+  --shadow: 0px 2px 0px 0px hsl(221 83% 53% / 0.00), 0px 1px 2px -1px hsl(221 83% 53% / 0.00);
+  --shadow-md: 0px 2px 0px 0px hsl(221 83% 53% / 0.00), 0px 2px 4px -1px hsl(221 83% 53% / 0.00);
+  --shadow-lg: 0px 2px 0px 0px hsl(221 83% 53% / 0.00), 0px 4px 6px -1px hsl(221 83% 53% / 0.00);
+  --shadow-xl: 0px 2px 0px 0px hsl(221 83% 53% / 0.00), 0px 8px 10px -1px hsl(221 83% 53% / 0.00);
+  --shadow-2xl: 0px 2px 0px 0px hsl(221 83% 53% / 0.00);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { 
+    opacity: 0; 
+    transform: translateY(10px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}

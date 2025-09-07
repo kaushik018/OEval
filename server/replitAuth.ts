@@ -1,6 +1,4 @@
 import * as client from "openid-client";
-import { Strategy } from "openid-client";
-import type { VerifyFunction } from "openid-client";
 
 import passport from "passport";
 import session from "express-session";
@@ -74,7 +72,7 @@ export async function setupAuth(app: Express) {
 
   const config = await getOidcConfig();
 
-  const verify: VerifyFunction = async (
+  const verify: client.VerifyFunction = async (
     tokens: client.TokenEndpointResponse & client.TokenEndpointResponseHelpers,
     verified: passport.AuthenticateCallback
   ) => {
@@ -86,7 +84,7 @@ export async function setupAuth(app: Express) {
 
   for (const domain of process.env
     .REPLIT_DOMAINS!.split(",")) {
-    const strategy = new Strategy(
+    const strategy = new client.Strategy(
       {
         name: `replitauth:${domain}`,
         config,

@@ -1,6 +1,6 @@
 import OpenAI from "openai";
 import { storage } from "../../server/storage.js";
-import { users, applications, benchmarks, performanceMetrics, integrationAnalysis, reliabilityMetrics } from "../shared/schema";
+import { users, applications, benchmarks, performanceMetrics, integrationAnalysis, reliabilityMetrics } from "../../server/shared/schema";
 
 // the newest OpenAI model is "gpt-5" which was released August 7, 2025. do not change this unless explicitly requested by the user
 const openai = new OpenAI({ 

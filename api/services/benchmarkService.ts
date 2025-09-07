@@ -1,5 +1,5 @@
 import { storage } from "../../server/storage.js";
-import { users, applications, benchmarks, performanceMetrics, integrationAnalysis, reliabilityMetrics } from "../shared/schema";
+import { users, applications, benchmarks, performanceMetrics, integrationAnalysis, reliabilityMetrics } from "../../server/shared/schema";
 
 interface BenchmarkResult {
   averageResponseTime: number;

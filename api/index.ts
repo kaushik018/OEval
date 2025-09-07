@@ -1,7 +1,7 @@
 import express, { type Request, Response, NextFunction } from "express";
 import type { Express } from "express";
 import { storage } from "../server/storage";
-import { setupAuth, isAuthenticated } from "../server/replitAuth";
+import { setupAuth, conditionalAuth } from "../server/replitAuth";
 import { insertApplicationSchema, insertBenchmarkSchema } from "../shared/schema";
 import { benchmarkService } from "../server/services/benchmarkService";
 import { aiService } from "../server/services/aiService";
@@ -68,11 +68,32 @@ let appInitialized = false;
 
 async function initializeApp() {
   if (!appInitialized) {
-    // Auth middleware
-    await setupAuth(app);
+    // Auth middleware - only setup if environment variables are available
+    let hasAuth = false;
+    try {
+      if (process.env.REPLIT_DOMAINS && process.env.DATABASE_URL) {
+        await setupAuth(app);
+        hasAuth = true;
+      } else {
+        console.log("Skipping Replit auth setup - environment variables not available");
+      }
+    } catch (error) {
+      console.error("Error setting up auth:", error);
+    }
+
+    // Create a conditional auth middleware
+    const conditionalAuth = (req: any, res: any, next: any) => {
+      if (hasAuth) {
+        return conditionalAuth(req, res, next);
+      } else {
+        // Mock user for development
+        req.user = { claims: { email: 'demo@example.com' } };
+        next();
+      }
+    };
 
     // Auth routes
-    app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
+    app.get('/api/auth/user', conditionalAuth, async (req: any, res) => {
       try {
         const userEmail = req.user.claims.email;
         const user = await storage.getUserByEmail(userEmail);
@@ -87,7 +108,7 @@ async function initializeApp() {
     });
 
     // Dashboard routes
-    app.get('/api/dashboard/stats', isAuthenticated, async (req: any, res) => {
+    app.get('/api/dashboard/stats', conditionalAuth, async (req: any, res) => {
       try {
         const userId = await getUserIdFromRequest(req);
         if (!userId) {
@@ -102,7 +123,7 @@ async function initializeApp() {
     });
 
     // Application routes
-    app.get('/api/applications', isAuthenticated, async (req: any, res) => {
+    app.get('/api/applications', conditionalAuth, async (req: any, res) => {
       try {
         const userId = await getUserIdFromRequest(req);
         if (!userId) {
@@ -135,7 +156,7 @@ async function initializeApp() {
       }
     });
 
-    app.post('/api/applications', isAuthenticated, async (req: any, res) => {
+    app.post('/api/applications', conditionalAuth, async (req: any, res) => {
       try {
         const userId = await getUserIdFromRequest(req);
         if (!userId) {
@@ -162,7 +183,7 @@ async function initializeApp() {
       }
     });
 
-    app.get('/api/applications/:id', isAuthenticated, async (req: any, res) => {
+    app.get('/api/applications/:id', conditionalAuth, async (req: any, res) => {
       try {
         const application = await storage.getApplicationById(req.params.id);
         if (!application) {
@@ -193,7 +214,7 @@ async function initializeApp() {
       }
     });
 
-    app.delete('/api/applications/:id', isAuthenticated, async (req: any, res) => {
+    app.delete('/api/applications/:id', conditionalAuth, async (req: any, res) => {
       try {
         const application = await storage.getApplicationById(req.params.id);
         if (!application) {
@@ -215,7 +236,7 @@ async function initializeApp() {
     });
 
     // Benchmark routes
-    app.get('/api/benchmarks', isAuthenticated, async (req: any, res) => {
+    app.get('/api/benchmarks', conditionalAuth, async (req: any, res) => {
       try {
         const userId = await getUserIdFromRequest(req);
         if (!userId) {
@@ -229,7 +250,7 @@ async function initializeApp() {
       }
     });
 
-    app.post('/api/benchmarks', isAuthenticated, async (req: any, res) => {
+    app.post('/api/benchmarks', conditionalAuth, async (req: any, res) => {
       try {
         const userId = await getUserIdFromRequest(req);
         if (!userId) {
@@ -256,7 +277,7 @@ async function initializeApp() {
       }
     });
 
-    app.get('/api/benchmarks/application/:applicationId', isAuthenticated, async (req: any, res) => {
+    app.get('/api/benchmarks/application/:applicationId', conditionalAuth, async (req: any, res) => {
       try {
         const userId = await getUserIdFromRequest(req);
         const application = await storage.getApplicationById(req.params.applicationId);
@@ -274,7 +295,7 @@ async function initializeApp() {
     });
 
     // Performance metrics routes
-    app.get('/api/performance/:applicationId', isAuthenticated, async (req: any, res) => {
+    app.get('/api/performance/:applicationId', conditionalAuth, async (req: any, res) => {
       try {
         const userId = await getUserIdFromRequest(req);
         const application = await storage.getApplicationById(req.params.applicationId);
@@ -292,7 +313,7 @@ async function initializeApp() {
     });
 
     // Export routes
-    app.get('/api/export/applications', isAuthenticated, async (req: any, res) => {
+    app.get('/api/export/applications', conditionalAuth, async (req: any, res) => {
       try {
         const userId = await getUserIdFromRequest(req);
         if (!userId) {

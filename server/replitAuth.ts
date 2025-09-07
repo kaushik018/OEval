@@ -1,12 +1,15 @@
 import * as client from "openid-client";
-import { Strategy } from "openid-client";
-
 import passport from "passport";
 import session from "express-session";
 import type { Express, RequestHandler } from "express";
 import memoize from "memoizee";
 import connectPg from "connect-pg-simple";
 import { storage } from "./storage";
+
+// Define Strategy type for openid-client
+interface OpenIDStrategy {
+  new (options: any, verify: any): any;
+}
 
 if (!process.env.REPLIT_DOMAINS) {
   throw new Error("Environment variable REPLIT_DOMAINS not provided");
@@ -85,6 +88,7 @@ export async function setupAuth(app: Express) {
 
   for (const domain of process.env
     .REPLIT_DOMAINS!.split(",")) {
+    const Strategy = (client as any).Strategy as OpenIDStrategy;
     const strategy = new Strategy(
       {
         name: `replitauth:${domain}`,

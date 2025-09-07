@@ -5,6 +5,7 @@ import type { Express, RequestHandler } from "express";
 import memoize from "memoizee";
 import connectPg from "connect-pg-simple";
 import { storage } from "../server/storage.js";
+import { users } from "./shared/schema";
 
 // Define Strategy type for openid-client
 interface OpenIDStrategy {

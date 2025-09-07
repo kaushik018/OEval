@@ -1,11 +1,11 @@
 import express, { type Request, Response, NextFunction } from "express";
 import type { Express } from "express";
-import { storage } from "../server/storage";
-import { setupAuth, conditionalAuth } from "../server/replitAuth";
+import { storage } from "./storage";
+import { setupAuth } from "./replitAuth";
 import { insertApplicationSchema, insertBenchmarkSchema } from "../shared/schema";
-import { benchmarkService } from "../server/services/benchmarkService";
-import { aiService } from "../server/services/aiService";
-import { reliabilityService } from "../server/services/reliabilityService";
+import { benchmarkService } from "./services/benchmarkService";
+import { aiService } from "./services/aiService";
+import { reliabilityService } from "./services/reliabilityService";
 
 const app = express();
 app.use(express.json());

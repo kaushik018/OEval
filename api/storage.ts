@@ -17,7 +17,7 @@ import {
   type InsertIntegrationAnalysis,
   type ReliabilityMetrics,
   type InsertReliabilityMetrics
-} from "./shared/schema";
+} from "../server/shared/schema";
 import { db } from "../server/db";
 import { eq, desc, and, sql } from "drizzle-orm";
 

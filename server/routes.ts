@@ -3,7 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
 // Update the import path below if your schema file is located elsewhere
-import { insertApplicationSchema, insertBenchmarkSchema } from "../shared/schema";
+import { insertApplicationSchema, insertBenchmarkSchema } from "./shared/schema";
 import { benchmarkService } from "./services/benchmarkService";
 import { aiService } from "./services/aiService";
 import { reliabilityService } from "./services/reliabilityService";

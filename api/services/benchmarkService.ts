@@ -1,4 +1,4 @@
-import { storage } from "../storage.js";
+import { storage } from "../../server/storage.js";
 
 interface BenchmarkResult {
   averageResponseTime: number;

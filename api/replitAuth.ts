@@ -4,7 +4,7 @@ import session from "express-session";
 import type { Express, RequestHandler } from "express";
 import memoize from "memoizee";
 import connectPg from "connect-pg-simple";
-import { storage } from "./storage.js";
+import { storage } from "../server/storage.js";
 
 // Define Strategy type for openid-client
 interface OpenIDStrategy {

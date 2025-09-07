@@ -1,6 +1,6 @@
 import express, { type Request, Response, NextFunction } from "express";
 import type { Express } from "express";
-import { storage } from "./storage.js";
+import { storage } from "../server/storage.js";
 import { setupAuth } from "./replitAuth.js";
 import { insertApplicationSchema, insertBenchmarkSchema } from "../shared/schema.js";
 import { benchmarkService } from "./services/benchmarkService.js";

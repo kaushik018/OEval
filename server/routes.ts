@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { setupAuth, isAuthenticated } from "./replitAuth";
+import { setupAuth, isAuthenticated } from "./githubAuth";
 // Update the import path below if your schema file is located elsewhere
 import { insertApplicationSchema, insertBenchmarkSchema } from "./shared/schema.js";
 import { benchmarkService } from "./services/benchmarkService";
@@ -11,7 +11,7 @@ import { reliabilityService } from "./services/reliabilityService";
 // Helper function to get user ID from authenticated request
 async function getUserIdFromRequest(req: any): Promise<string | null> {
   try {
-    const userEmail = req.user.claims.email;
+    const userEmail = req.user.email;
     const user = await storage.getUserByEmail(userEmail);
     return user?.id || null;
   } catch (error) {
@@ -27,7 +27,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Auth routes
   app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
     try {
-      const userEmail = req.user.claims.email;
+      const userEmail = req.user.email;
       const user = await storage.getUserByEmail(userEmail);
       if (!user) {
         return res.status(404).json({ message: "User not found" });

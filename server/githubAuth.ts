@@ -1,28 +1,27 @@
-
 import passport from "passport";
 import { Strategy as GitHubStrategy, Profile as GitHubProfile } from "passport-github2";
 import session from "express-session";
 import connectPg from "connect-pg-simple";
 import type { Express, RequestHandler } from "express";
-import { storage } from "./storage";
+import { storage } from "./storage.js";
 
 export function getSession() {
   const sessionTtl = 7 * 24 * 60 * 60 * 1000; // 1 week
   const pgStore = connectPg(session);
   const sessionStore = new pgStore({
     conString: process.env.DATABASE_URL,
-    createTableIfMissing: false,
+    createTableIfMissing: true,
     ttl: sessionTtl,
     tableName: "sessions",
   });
   return session({
-    secret: process.env.SESSION_SECRET!,
+    secret: process.env.SESSION_SECRET || 'your-secret-key',
     store: sessionStore,
     resave: false,
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      secure: true,
+      secure: process.env.NODE_ENV === 'production',
       maxAge: sessionTtl,
     },
   });
@@ -36,7 +35,9 @@ passport.use(
     {
       clientID: process.env.GITHUB_CLIENT_ID!,
       clientSecret: process.env.GITHUB_CLIENT_SECRET!,
-      callbackURL: "https://o-eval.vercel.app/api/auth/callback/github",
+      callbackURL: process.env.NODE_ENV === 'production' 
+        ? "https://your-domain.vercel.app/api/auth/callback/github"
+        : "http://localhost:5000/api/auth/callback/github",
       scope: ["user:email"],
     },
     async (
@@ -45,21 +46,28 @@ passport.use(
       profile: GitHubProfile,
       done: (err: any, user?: any) => void
     ) => {
-      // Upsert user in DB
-      await storage.upsertUser({
-        email: profile.emails?.[0]?.value || null,
-        firstName: profile.displayName || profile.username || null,
-        lastName: null,
-        profileImageUrl: profile.photos?.[0]?.value || null,
-      });
-      const user = {
-        email: profile.emails?.[0]?.value,
-        displayName: profile.displayName,
-        username: profile.username,
-        profileImageUrl: profile.photos?.[0]?.value,
-        accessToken,
-      };
-      done(null, user);
+      try {
+        // Upsert user in DB
+        const userData = {
+          email: profile.emails?.[0]?.value || null,
+          firstName: profile.displayName || profile.username || null,
+          lastName: null,
+          profileImageUrl: profile.photos?.[0]?.value || null,
+        };
+        
+        await storage.upsertUser(userData);
+        
+        const user = {
+          email: profile.emails?.[0]?.value,
+          displayName: profile.displayName,
+          username: profile.username,
+          profileImageUrl: profile.photos?.[0]?.value,
+          accessToken,
+        };
+        done(null, user);
+      } catch (error) {
+        done(error);
+      }
     }
   )
 );
